@@ -1,0 +1,143 @@
+{
+  "profile": {
+    "name": "Hyun Woo, Choi",
+    "role": "Product-focused Builder",
+    "intro": "Product-driven Data Engineer with experience building analytics systems and ERP integrations.",
+    "skills": [
+      "Languages: Korean (Native), English (Fluent)",
+      "Programming: Python, SQL, Javascript",
+      "Tools: SAP ERP, Excel (Advanced), Git",
+      "Data: Pandas, Scikit-learn, SQL analytics"
+    ],
+    "linkedin": "www.linkedin.com/in/hyun-woo-choi93",
+    "github": "https://github.com/your-username",
+    "email": "coladrop93@gmail.com"
+  },
+  "education": [
+    {
+      "id": "usc",
+      "institution": "University of Southern California (USC)",
+      "course": "M.S. in Industrial System Engineering - Analytics",
+      "period": "Expected 2027",
+      "details": "Los Angeles, USA"
+    },
+    {
+      "id": "ssafy",
+      "institution": "Samsung Software Academy for Youth (SSAFY)",
+      "course": "Certificate in Computer Programming",
+      "period": "2023",
+      "details": "Seoul, Korea"
+    },
+    {
+      "id": "kyung-hee",
+      "institution": "Kyung Hee University",
+      "course": "B.A. in International Studies (Economics and Politics)",
+      "period": "",
+      "details": "Seoul, Korea"
+    }
+  ],
+  "companyWork": [
+    {
+      "id": "sk-ax",
+      "company": "SK AX (Affiliate of SK Inc.)",
+      "role": "Manager / ERP Engineer",
+      "period": "Jan 2025 - Feb 2026",
+      "location": "Korea",
+      "overview": "Integrated enterprise datasets and automated executive reporting for sales, planning, and finance decision-making.",
+      "projects": [
+        {
+          "id": "skax-kpi-dashboard",
+          "projectName": "Executive KPI Dashboard & Reporting Automation",
+          "summary": "Integrated SAP ERP and Salesforce data to build KPI dashboards and automated reporting workflows for executives.",
+          "outcomes": [
+            "Integrated SAP ERP and Salesforce datasets to build executive KPI dashboards for sales and resource planning.",
+            "Designed automated SQL-based reporting pipelines reducing reporting cycle time from 1 month to 5 days.",
+            "Ensured cross-platform data integrity to improve financial reporting accuracy and executive decision-making.",
+            "Translated complex enterprise datasets into business-readable performance metrics."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tmax-bi",
+      "company": "Tmax BI",
+      "role": "Frontend Developer / Project Lead",
+      "period": "Aug 2023 - Dec 2024",
+      "location": "Korea",
+      "overview": "Built financial MIS dashboards and data models aligned with compliance requirements and reporting scalability.",
+      "projects": [
+        {
+          "id": "tmax-financial-mis",
+          "projectName": "Accounting MIS Dashboard Development",
+          "summary": "Developed finance reporting systems and structured data models around accounting and tax requirements.",
+          "outcomes": [
+            "Developed accounting MIS dashboards aligned with Korean Tax Law compliance.",
+            "Partnered with finance and tax stakeholders to convert regulatory requirements into structured data models.",
+            "Optimized financial data workflows improving reporting performance and system scalability."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "triple",
+      "company": "Triple (Startup)",
+      "role": "Growth & Product Operations",
+      "period": "Aug 2018 - Feb 2019",
+      "location": "Korea",
+      "overview": "Drove early-stage growth through product analysis, A/B testing, and partnership-led acquisition work.",
+      "projects": [
+        {
+          "id": "triple-growth-ops",
+          "projectName": "Growth Experimentation & Partnership Operations",
+          "summary": "Used product analytics and outbound partnership execution to improve platform growth in an early startup environment.",
+          "outcomes": [
+            "Conducted A/B testing and user behavior analysis to optimize platform performance.",
+            "Increased Monthly Active Users (MAU) from 1xx to 1,5xx, delivering 1,400%+ growth.",
+            "Led cold outreach and partnership initiatives for two early-stage platforms."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rok-air-force",
+      "company": "Republic of Korea Air Force",
+      "role": "Administrative Clerk (Battalion-level)",
+      "period": "Aug 2014 - Aug 2016",
+      "location": "Korea",
+      "overview": "Managed battalion-level administrative data and improved reporting efficiency for personnel and logistics operations.",
+      "projects": [
+        {
+          "id": "rokaf-admin-ops",
+          "projectName": "HR & Logistics Reporting Operations",
+          "summary": "Served as the sole administrator for personnel and logistics records while improving reporting accuracy with spreadsheet automation.",
+          "outcomes": [
+            "Managed HR and logistics records for 200+ personnel at battalion level.",
+            "Automated reporting workflows using advanced Excel functions.",
+            "Improved data accuracy and processing efficiency in recurring administrative tasks."
+          ]
+        }
+      ]
+    }
+  ],
+  "sideProjects": [
+    {
+      "id": "literary-text-analysis-platform",
+      "projectName": "Literary Text Analysis Platform",
+      "period": "",
+      "summary": "Collaboration with a CMU PhD researcher on a web-based platform for computational analysis of English literature.",
+      "outcomes": [
+        "Built a web-based analytical platform supporting computational analysis of English literature.",
+        "Designed structured datasets and implemented data visualization modules to explore textual patterns and thematic trends."
+      ]
+    },
+    {
+      "id": "international-experimental-economics-program",
+      "projectName": "International Experimental Economics Program",
+      "period": "",
+      "summary": "Behavioral data infrastructure work across an experimental economics program involving 5+ universities.",
+      "outcomes": [
+        "Designed experiment tracking and participant-level data collection workflows for behavioral data analysis."
+      ]
+    }
+  ]
+}
