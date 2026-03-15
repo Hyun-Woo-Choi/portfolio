@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analysis Dashboard by Organization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: '72', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f2f3f4;
+            color: #32363a;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 32px 40px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .summary-card {
+            background: #ffffff;
+            padding: 24px 28px;
+            border-radius: 8px;
+            border: 1px solid #d9d9d9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: #6a6d70;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .summary-card .value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .tree-container {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #d9d9d9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            padding: 20px;
+            overflow: auto;
+            min-height: 600px;
+        }
+
+        .tree-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 1600px;
+            min-width: 100%;
+        }
+
+        /* Base tree node styles */
+        .tree-node {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            width: 400px;
+        }
+
+        .node-row {
+            display: flex;
+            align-items: center;
+            min-height: 90px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 18px 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            width: 400px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .node-content:hover {
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Level-specific styling */
+        .node-content.level-0 {
+            border-color: #2c3e50;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .node-content.level-1 {
+            border-color: #27ae60;
+            background: #f8fff9;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .node-content.level-2 {
+            border-color: #f39c12;
+            background: #fffdf5;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .node-content.level-3 {
+            border-color: #c0392b;
+            background: #fff5f5;
+            font-weight: 400;
+            font-size: 15px;
+        }
+
+        .node-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .node-name {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .node-title {
+            color: #2c3e50;
+            font-weight: inherit;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 12px;
+        }
+
+        .badge.internal {
+            background-color: #d1e7dd;
+            color: #0a3622;
+        }
+
+        .badge.external {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+
+        .badge.new {
+            background-color: #cff4fc;
+            color: #055160;
+        }
+
+        .badge.deferred {
+            background-color: #e2e3e5;
+            color: #41464b;
+        }
+
+        .node-metrics {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #6a6d70;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .percentage {
+            padding: 3px 9px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .percentage.positive {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .percentage.negative {
+            background-color: #fadbd8;
+            color: #c0392b;
+        }
+
+        .expand-toggle {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            margin-left: 18px;
+            flex-shrink: 0;
+        }
+
+        .expand-toggle.expanded {
+            transform: rotate(90deg);
+        }
+
+        .expand-toggle:hover {
+            background: #1a252f;
+        }
+
+        /* Child node container */
+        .children-container {
+            display: none;
+            margin-left: 90px;
+            position: relative;
+            flex-direction: column;
+            gap: 30px;
+            width: 400px;
+        }
+
+        .children-container.expanded {
+            display: flex;
+        }
+
+        /* Connector lines */
+        .children-container::before {
+            content: '';
+            position: absolute;
+            left: -68px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #d9d9d9;
+        }
+
+        .children-container > .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -68px;
+            top: 45px;
+            width: 60px;
+            height: 2px;
+            background: #d9d9d9;
+        }
+
+        /* Vertical line adjustment for the last child node */
+        .children-container > .tree-node:last-child::after {
+            content: '';
+            position: absolute;
+            left: -68px;
+            top: 47px;
+            bottom: -50%;
+            width: 2px;
+            background: #ffffff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .tree-container {
+                padding: 15px;
+            }
+            
+            .node-content {
+                width: 320px;
+                padding: 15px 18px;
+            }
+            
+            .tree-node {
+                width: 320px;
+            }
+            
+            .children-container {
+                width: 320px;
+                margin-left: 75px;
+            }
+            
+            .tree-wrapper {
+                width: 1200px;
+            }
+            
+            .node-metrics {
+                gap: 12px;
+            }
+        }
+
+        /* Expand all nodes button */
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #1a252f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sales Analysis Dashboard by Organization</h1>
+            <p>Hierarchical analysis of revenue, margin, margin rate, and year-over-year performance (3 divisions, 30 accounts)</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Revenue</h3>
+                <div class="value">KRW 2.385T</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Margin</h3>
+                <div class="value">KRW 477B</div>
+            </div>
+            <div class="summary-card">
+                <h3>Average Margin Rate</h3>
+                <div class="value">20.0%</div>
+            </div>
+            <div class="summary-card">
+                <h3>Year over Year</h3>
+                <div class="value positive">+18.9%</div>
+            </div>
+        </div>
+
+        <div class="tree-container">
+            <div class="controls">
+                <button class="control-btn" onclick="expandAll()">Expand all</button>
+                <button class="control-btn" onclick="collapseAll()">Collapse all</button>
+            </div>
+            <div class="tree-wrapper" id="treeWrapper">
+                <!-- Tree structure is generated dynamically by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Organization data definition
+        const orgData = [
+            {
+                id: 'org1', name: 'AT Services Division', type: 'organization',
+                revenue: 4850, margin: 970, marginRate: 20.0, yearOverYear: 15.3,
+                children: [
+                    {
+                        id: 'acc1_1', name: 'Samsung Electronics', type: 'account',
+                        revenue: 1200, margin: 240, marginRate: 20.0, yearOverYear: 18.5,
+                        children: [
+                            {
+                                id: 'int1_1', name: 'Internal', type: 'internal',
+                                revenue: 700, margin: 140, marginRate: 20.0, yearOverYear: 12.3,
+                                children: [
+                                    { id: 'new1_1_1', name: 'New', type: 'new', revenue: 450, margin: 90, marginRate: 20.0, yearOverYear: 25.0 },
+                                    { id: 'def1_1_1', name: 'Deferred', type: 'deferred', revenue: 250, margin: 50, marginRate: 20.0, yearOverYear: -5.2 }
+                                ]
+                            },
+                            {
+                                id: 'ext1_1', name: 'External', type: 'external',
+                                revenue: 500, margin: 100, marginRate: 20.0, yearOverYear: 28.7,
+                                children: [
+                                    { id: 'new1_1_2', name: 'New', type: 'new', revenue: 350, margin: 70, marginRate: 20.0, yearOverYear: 45.2 },
+                                    { id: 'def1_1_2', name: 'Deferred', type: 'deferred', revenue: 150, margin: 30, marginRate: 20.0, yearOverYear: 8.1 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'acc1_2', name: 'LG Electronics', type: 'account',
+                        revenue: 980, margin: 196, marginRate: 20.0, yearOverYear: 12.1,
+                        children: [
+                            {
+                                id: 'int1_2', name: 'Internal', type: 'internal',
+                                revenue: 600, margin: 120, marginRate: 20.0, yearOverYear: 8.9,
+                                children: [
+                                    { id: 'new1_2_1', name: 'New', type: 'new', revenue: 400, margin: 80, marginRate: 20.0, yearOverYear: 15.3 },
+                                    { id: 'def1_2_1', name: 'Deferred', type: 'deferred', revenue: 200, margin: 40, marginRate: 20.0, yearOverYear: -8.7 }
+                                ]
+                            },
+                            {
+                                id: 'ext1_2', name: 'External', type: 'external',
+                                revenue: 380, margin: 76, marginRate: 20.0, yearOverYear: 20.5,
+                                children: [
+                                    { id: 'new1_2_2', name: 'New', type: 'new', revenue: 250, margin: 50, marginRate: 20.0, yearOverYear: 35.8 },
+                                    { id: 'def1_2_2', name: 'Deferred', type: 'deferred', revenue: 130, margin: 26, marginRate: 20.0, yearOverYear: -2.1 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'acc1_3', name: 'Naver Corporation', type: 'account',
+                        revenue: 970, margin: 194, marginRate: 20.0, yearOverYear: 22.8,
+                        children: [
+                            {
+                                id: 'int1_3', name: 'Internal', type: 'internal',
+                                revenue: 580, margin: 116, marginRate: 20.0, yearOverYear: 18.4,
+                                children: [
+                                    { id: 'new1_3_1', name: 'New', type: 'new', revenue: 380, margin: 76, marginRate: 20.0, yearOverYear: 30.2 },
+                                    { id: 'def1_3_1', name: 'Deferred', type: 'deferred', revenue: 200, margin: 40, marginRate: 20.0, yearOverYear: 2.1 }
+                                ]
+                            },
+                            {
+                                id: 'ext1_3', name: 'External', type: 'external',
+                                revenue: 390, margin: 78, marginRate: 20.0, yearOverYear: 31.5,
+                                children: [
+                                    { id: 'new1_3_2', name: 'New', type: 'new', revenue: 280, margin: 56, marginRate: 20.0, yearOverYear: 48.7 },
+                                    { id: 'def1_3_2', name: 'Deferred', type: 'deferred', revenue: 110, margin: 22, marginRate: 20.0, yearOverYear: 6.3 }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'org2', name: 'Manufacturing Services Division', type: 'organization',
+                revenue: 2980, margin: 596, marginRate: 20.0, yearOverYear: 42.5,
+                children: [
+                    {
+                        id: 'acc2_1', name: 'OpenAI Integration', type: 'account',
+                        revenue: 850, margin: 170, marginRate: 20.0, yearOverYear: 125.8,
+                        children: [
+                            {
+                                id: 'int2_1', name: 'Internal', type: 'internal',
+                                revenue: 520, margin: 104, marginRate: 20.0, yearOverYear: 145.2,
+                                children: [
+                                    { id: 'new2_1_1', name: 'New', type: 'new', revenue: 450, margin: 90, marginRate: 20.0, yearOverYear: 168.9 },
+                                    { id: 'def2_1_1', name: 'Deferred', type: 'deferred', revenue: 70, margin: 14, marginRate: 20.0, yearOverYear: 75.2 }
+                                ]
+                            },
+                            {
+                                id: 'ext2_1', name: 'External', type: 'external',
+                                revenue: 330, margin: 66, marginRate: 20.0, yearOverYear: 95.5,
+                                children: [
+                                    { id: 'new2_1_2', name: 'New', type: 'new', revenue: 280, margin: 56, marginRate: 20.0, yearOverYear: 110.8 },
+                                    { id: 'def2_1_2', name: 'Deferred', type: 'deferred', revenue: 50, margin: 10, marginRate: 20.0, yearOverYear: 45.3 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'acc2_2', name: 'Anthropic Claude', type: 'account',
+                        revenue: 620, margin: 124, marginRate: 20.0, yearOverYear: 89.7,
+                        children: [
+                            {
+                                id: 'int2_2', name: 'Internal', type: 'internal',
+                                revenue: 380, margin: 76, marginRate: 20.0, yearOverYear: 95.8,
+                                children: [
+                                    { id: 'new2_2_1', name: 'New', type: 'new', revenue: 320, margin: 64, marginRate: 20.0, yearOverYear: 125.4 },
+                                    { id: 'def2_2_1', name: 'Deferred', type: 'deferred', revenue: 60, margin: 12, marginRate: 20.0, yearOverYear: 35.2 }
+                                ]
+                            },
+                            {
+                                id: 'ext2_2', name: 'External', type: 'external',
+                                revenue: 240, margin: 48, marginRate: 20.0, yearOverYear: 78.9,
+                                children: [
+                                    { id: 'new2_2_2', name: 'New', type: 'new', revenue: 200, margin: 40, marginRate: 20.0, yearOverYear: 95.8 },
+                                    { id: 'def2_2_2', name: 'Deferred', type: 'deferred', revenue: 40, margin: 8, marginRate: 20.0, yearOverYear: 28.5 }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'org3', name: 'Enterprise Services Division', type: 'organization',
+                revenue: 3620, margin: 724, marginRate: 20.0, yearOverYear: 12.8,
+                children: [
+                    {
+                        id: 'acc3_1', name: 'KB Kookmin Bank', type: 'account',
+                        revenue: 890, margin: 178, marginRate: 20.0, yearOverYear: 15.7,
+                        children: [
+                            {
+                                id: 'int3_1', name: 'Internal', type: 'internal',
+                                revenue: 540, margin: 108, marginRate: 20.0, yearOverYear: 12.4,
+                                children: [
+                                    { id: 'new3_1_1', name: 'New', type: 'new', revenue: 320, margin: 64, marginRate: 20.0, yearOverYear: 25.8 },
+                                    { id: 'def3_1_1', name: 'Deferred', type: 'deferred', revenue: 220, margin: 44, marginRate: 20.0, yearOverYear: -3.2 }
+                                ]
+                            },
+                            {
+                                id: 'ext3_1', name: 'External', type: 'external',
+                                revenue: 350, margin: 70, marginRate: 20.0, yearOverYear: 22.5,
+                                children: [
+                                    { id: 'new3_1_2', name: 'New', type: 'new', revenue: 250, margin: 50, marginRate: 20.0, yearOverYear: 35.8 },
+                                    { id: 'def3_1_2', name: 'Deferred', type: 'deferred', revenue: 100, margin: 20, marginRate: 20.0, yearOverYear: -1.5 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'acc3_2', name: 'Shinhan Bank', type: 'account',
+                        revenue: 780, margin: 156, marginRate: 20.0, yearOverYear: 8.9,
+                        children: [
+                            {
+                                id: 'int3_2', name: 'Internal', type: 'internal',
+                                revenue: 480, margin: 96, marginRate: 20.0, yearOverYear: 6.7,
+                                children: [
+                                    { id: 'new3_2_1', name: 'New', type: 'new', revenue: 280, margin: 56, marginRate: 20.0, yearOverYear: 18.5 },
+                                    { id: 'def3_2_1', name: 'Deferred', type: 'deferred', revenue: 200, margin: 40, marginRate: 20.0, yearOverYear: -8.9 }
+                                ]
+                            },
+                            {
+                                id: 'ext3_2', name: 'External', type: 'external',
+                                revenue: 300, margin: 60, marginRate: 20.0, yearOverYear: 13.2,
+                                children: [
+                                    { id: 'new3_2_2', name: 'New', type: 'new', revenue: 200, margin: 40, marginRate: 20.0, yearOverYear: 25.7 },
+                                    { id: 'def3_2_2', name: 'Deferred', type: 'deferred', revenue: 100, margin: 20, marginRate: 20.0, yearOverYear: -5.8 }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Tree node creation function
+        function createTreeNode(item, level = 0) {
+            const hasChildren = item.children && item.children.length > 0;
+            
+            let badge = '';
+            if (item.type === 'internal') badge = '<span class="badge internal">Internal</span>';
+            else if (item.type === 'external') badge = '<span class="badge external">External</span>';
+            else if (item.type === 'new') badge = '<span class="badge new">New</span>';
+            else if (item.type === 'deferred') badge = '<span class="badge deferred">Deferred</span>';
+
+            const yoyClass = item.yearOverYear > 0 ? 'positive' : 
+                            item.yearOverYear < 0 ? 'negative' : 'neutral';
+            const yoySign = item.yearOverYear > 0 ? '+' : '';
+
+            const nodeHtml = `
+                <div class="tree-node" data-level="${level}">
+                    <div class="node-row">
+                        <div class="node-content level-${level}" data-id="${item.id}" onclick="toggleNode('${item.id}')">
+                            <div class="node-info">
+                                <div class="node-name">
+                                    <span class="node-title">${item.name}</span>
+                                    ${badge}
+                                </div>
+                                <div class="node-metrics">
+                                    <div class="metric">
+                                        <div class="metric-label">Revenue</div>
+                                        <div class="metric-value">${item.revenue.toLocaleString()} x 100M KRW</div>
+                                    </div>
+                                    <div class="metric">
+                                        <div class="metric-label">Margin</div>
+                                        <div class="metric-value">${item.margin.toLocaleString()} x 100M KRW</div>
+                                    </div>
+                                    <div class="metric">
+                                        <div class="metric-label">Margin Rate</div>
+                                        <div class="metric-value">${item.marginRate.toFixed(1)}%</div>
+                                    </div>
+                                    <div class="metric">
+                                        <div class="metric-label">YoY</div>
+                                        <div class="percentage ${yoyClass}">${yoySign}${item.yearOverYear.toFixed(1)}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            ${hasChildren ? `<button class="expand-toggle" id="toggle-${item.id}">▶</button>` : ''}
+                        </div>
+                    </div>
+                    ${hasChildren ? `
+                        <div class="children-container" id="children-${item.id}">
+                            ${item.children.map(child => createTreeNode(child, level + 1)).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            return nodeHtml;
+        }
+
+        // Node toggle function
+        function toggleNode(id) {
+            const childrenContainer = document.getElementById(`children-${id}`);
+            const button = document.getElementById(`toggle-${id}`);
+            
+            if (!childrenContainer) return;
+            
+            if (childrenContainer.classList.contains('expanded')) {
+                childrenContainer.classList.remove('expanded');
+                if (button) button.classList.remove('expanded');
+            } else {
+                childrenContainer.classList.add('expanded');
+                if (button) button.classList.add('expanded');
+            }
+        }
+
+        // Expand all
+        function expandAll() {
+            const containers = document.querySelectorAll('.children-container');
+            const buttons = document.querySelectorAll('.expand-toggle');
+            
+            containers.forEach(container => {
+                container.classList.add('expanded');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.add('expanded');
+            });
+        }
+
+        // Collapse all
+        function collapseAll() {
+            const containers = document.querySelectorAll('.children-container');
+            const buttons = document.querySelectorAll('.expand-toggle');
+            
+            containers.forEach(container => {
+                container.classList.remove('expanded');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.remove('expanded');
+            });
+        }
+
+        // Tree creation function
+        function createTree() {
+            const wrapper = document.getElementById('treeWrapper');
+            wrapper.innerHTML = orgData.map(org => createTreeNode(org, 0)).join('');
+        }
+
+        // Build tree on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createTree();
+        });
+    </script>
+</body>
+</html>

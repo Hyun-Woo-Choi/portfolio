@@ -150,6 +150,7 @@ h1 {
 
 .lead {
   max-width: none;
+  white-space: pre-line;
 }
 
 .contact-links {
@@ -199,6 +200,7 @@ h1 {
 }
 
 .company-timeline {
+  --timeline-axis: 0.75rem;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(220px, 1fr);
@@ -206,29 +208,17 @@ h1 {
   margin-bottom: 1rem;
   overflow-x: auto;
   padding: 0.2rem 0 0.4rem;
-  position: relative;
-}
-
-.company-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 11px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--line-strong) 0%, color-mix(in srgb, var(--line-strong) 36%, var(--line)) 100%);
-  border-radius: 999px;
-  pointer-events: none;
 }
 
 .timeline-item {
   min-width: 0;
   border: 0;
-  padding: 0.1rem 0 0;
+  padding: calc(var(--timeline-axis) + 0.65rem) 0 0;
   background: transparent;
   color: inherit;
   text-align: left;
   cursor: pointer;
+  position: relative;
 }
 
 .timeline-item:hover .timeline-company,
@@ -243,10 +233,28 @@ h1 {
 }
 
 .timeline-rail {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.65rem;
-  min-height: 22px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--timeline-axis) * 2);
+}
+
+.timeline-rail::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: -0.8rem;
+  top: var(--timeline-axis);
+  transform: translateY(-50%);
+  height: 3px;
+  background: linear-gradient(90deg, var(--line-strong) 0%, color-mix(in srgb, var(--line-strong) 36%, var(--line)) 100%);
+  border-radius: 999px;
+}
+
+.timeline-item:last-child .timeline-rail::before {
+  right: auto;
+  width: 12px;
 }
 
 .timeline-dot {
@@ -256,7 +264,10 @@ h1 {
   background: var(--accent);
   border: 2px solid var(--surface);
   box-shadow: 0 0 0 1px var(--line-strong);
-  flex: 0 0 auto;
+  position: absolute;
+  top: calc(var(--timeline-axis) - 6px);
+  left: 0;
+  z-index: 1;
 }
 
 .timeline-copy {
@@ -410,6 +421,19 @@ h1 {
 
 .project-cta {
   margin-top: 0.5rem;
+}
+
+.modal-actions {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.sample-note {
+  margin-top: 0.7rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .company-expand-wrap,

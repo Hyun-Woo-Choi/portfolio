@@ -36,6 +36,18 @@ export default function ProjectModal({ item, onClose }) {
                     <h3>{project.projectName}</h3>
                     <p className="project-summary">{project.summary}</p>
 
+                    {project.sampleAssets?.length ? (
+                      <div className="modal-actions">
+                        {project.sampleAssets.map((sample) => (
+                          <a key={sample.url} href={sample.url} target="_blank" rel="noreferrer" className="project-cta">
+                            {sample.label}
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {project.sampleNote ? <p className="sample-note">{project.sampleNote}</p> : null}
+
                     {project.image ? (
                       <div className="modal-image-wrap">
                         <Image
@@ -65,6 +77,13 @@ export default function ProjectModal({ item, onClose }) {
               <h3>{item.projectName}</h3>
               {item.period ? <p className="project-meta">{item.period}</p> : null}
               <p className="project-summary">{item.summary}</p>
+              {item.projectUrl ? (
+                <div className="modal-actions">
+                  <a href={item.projectUrl} target="_blank" rel="noreferrer" className="project-cta">
+                    Open project
+                  </a>
+                </div>
+              ) : null}
             </div>
 
             {item.image ? (

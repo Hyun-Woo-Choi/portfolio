@@ -2,7 +2,7 @@
   "profile": {
     "name": "Hyun Woo, Choi",
     "role": "Product-focused Builder",
-    "intro": "Product-driven Data Engineer with experience building analytics systems and ERP integrations.",
+    "intro": "I am a developer and analytics graduate student who works at the intersection of data science and systems engineering.\n\nMy work focuses on building data-driven systems — from collecting and structuring data, to developing predictive models, and implementing the systems that make those models usable in practice.\n\nWith experience in enterprise software development and financial ERP systems, I approach data problems with a systems perspective: understanding how data flows through real-world systems and how analytical models can be integrated into them.\n\nI am particularly interested in reproducible research, machine learning model improvement, and building practical systems that turn data into reliable decision-making tools.",
     "skills": [
       "Languages: Korean (Native), English (Fluent)",
       "Programming: Python, SQL, Javascript",
@@ -49,6 +49,17 @@
           "id": "skax-kpi-dashboard",
           "projectName": "Executive KPI Dashboard & Reporting Automation",
           "summary": "Integrated SAP ERP and Salesforce data to build KPI dashboards and automated reporting workflows for executives.",
+          "sampleAssets": [
+            {
+              "label": "Open sales dashboard sample",
+              "url": "/org_sales_dashboard.html"
+            },
+            {
+              "label": "Open deal stage dashboard sample",
+              "url": "/deal-stage-dashboard.html"
+            }
+          ],
+          "sampleNote": "These dashboard artifacts are not real production data outputs. They were created as AI-assisted wireframes, and are included to demonstrate how data cleansing and automation work produced outputs with a comparable structure and reporting intent.",
           "outcomes": [
             "Integrated SAP ERP and Salesforce datasets to build executive KPI dashboards for sales and resource planning.",
             "Designed automated SQL-based reporting pipelines reducing reporting cycle time from 1 month to 5 days.",
@@ -122,9 +133,10 @@
   "sideProjects": [
     {
       "id": "literary-text-analysis-platform",
-      "projectName": "Literary Text Analysis Platform",
+      "projectName": "Diaspora Voices In Translation",
       "period": "",
       "summary": "Collaboration with a CMU PhD researcher on a web-based platform for computational analysis of English literature.",
+      "projectUrl": "https://next-test-one-henna.vercel.app/",
       "outcomes": [
         "Built a web-based analytical platform supporting computational analysis of English literature.",
         "Designed structured datasets and implemented data visualization modules to explore textual patterns and thematic trends."

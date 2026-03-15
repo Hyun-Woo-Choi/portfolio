@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Stage Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            background: #fff;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        
+        /* Card section styles */
+        .cards-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .metric-card.lead {
+            border-top: 4px solid #3b82f6;
+        }
+        
+        .metric-card.contracted {
+            border-top: 4px solid #10b981;
+        }
+        
+        .metric-card.deselected {
+            border-top: 4px solid #f59e0b;
+        }
+        
+        .metric-card.deal-lost {
+            border-top: 4px solid #ef4444;
+        }
+        
+        .card-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+        
+        .card-change {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .change-positive {
+            color: #10b981;
+        }
+        
+        .change-negative {
+            color: #ef4444;
+        }
+        
+        .arrow {
+            margin-right: 4px;
+        }
+        
+        /* Chart section styles */
+        .chart-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .chart-container {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            height: 320px;
+        }
+        
+        .chart-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        
+        .chart-placeholder {
+            width: 100%;
+            height: 250px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        /* Bar chart styles */
+        .bar-chart-container {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bars-wrapper {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 160px;
+        }
+        
+        .bar {
+            width: 30px;
+            background: #3b82f6;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .bar.previous {
+            background: #93c5fd;
+        }
+        
+        .bar.current {
+            background: #3b82f6;
+        }
+        
+        .bar-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+        
+        /* Pie chart styles */
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .pie-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3b82f6 0deg 108deg,
+                #10b981 108deg 198deg,
+                #f59e0b 198deg 270deg,
+                #ef4444 270deg 360deg
+            );
+        }
+        
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .cards-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cards-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Pipeline Stage Dashboard</h1>
+        </div>
+        
+        <!-- First row: cards -->
+        <div class="cards-section">
+            <div class="metric-card lead">
+                <div class="card-title">Open Pipeline</div>
+                <div class="card-value">₩2.4B</div>
+                <div class="card-change change-positive">
+                    <span class="arrow">▲</span>
+                    <span>₩320M (+15.4%)</span>
+                </div>
+            </div>
+            
+            <div class="metric-card contracted">
+                <div class="card-title">Closed Won</div>
+                <div class="card-value">₩1.8B</div>
+                <div class="card-change change-positive">
+                    <span class="arrow">▲</span>
+                    <span>₩180M (+11.1%)</span>
+                </div>
+            </div>
+            
+            <div class="metric-card deselected">
+                <div class="card-title">No Decision</div>
+                <div class="card-value">₩480M</div>
+                <div class="card-change change-negative">
+                    <span class="arrow">▼</span>
+                    <span>₩60M (-11.1%)</span>
+                </div>
+            </div>
+            
+            <div class="metric-card deal-lost">
+                <div class="card-title">Closed Lost</div>
+                <div class="card-value">₩320M</div>
+                <div class="card-change change-negative">
+                    <span class="arrow">▼</span>
+                    <span>₩40M (-11.1%)</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Second row: BAU data section -->
+        <div class="chart-section">
+            <h2 class="section-title">BAU Data Analysis</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">Stage comparison: previous week vs current week (deal size & count)</div>
+                    <div class="bar-chart-container">
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 120px;"></div>
+                                <div class="bar current" style="height: 140px;"></div>
+                            </div>
+                            <div class="bar-label">Open Pipeline</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 100px;"></div>
+                                <div class="bar current" style="height: 110px;"></div>
+                            </div>
+                            <div class="bar-label">Closed Won</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 40px;"></div>
+                                <div class="bar current" style="height: 35px;"></div>
+                            </div>
+                            <div class="bar-label">No Decision</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 30px;"></div>
+                                <div class="bar current" style="height: 25px;"></div>
+                            </div>
+                            <div class="bar-label">Closed Lost</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #6b7280;">
+                        <span style="margin-right: 20px;">■ Previous week</span>
+                        <span>■ Current week</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">Contracted status by division</div>
+                    <div class="pie-chart">
+                        <div class="pie-circle"></div>
+                        <div class="pie-center"></div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Sales Team 1 (30%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Sales Team 2 (25%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Sales Team 3 (25%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>Sales Team 4 (20%)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">Closed Lost & No Decision by division</div>
+                    <div class="pie-chart">
+                        <div class="pie-circle" style="background: conic-gradient(
+                            #ef4444 0deg 144deg,
+                            #f59e0b 144deg 252deg,
+                            #3b82f6 252deg 324deg,
+                            #10b981 324deg 360deg
+                        );"></div>
+                        <div class="pie-center"></div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>Sales Team 1 (40%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Sales Team 2 (30%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Sales Team 3 (20%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Sales Team 4 (10%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Third row: DT revenue information -->
+        <div class="chart-section">
+            <h2 class="section-title">DT Revenue Analysis</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">DT stage comparison: previous week vs current week (deal size & count)</div>
+                    <div class="bar-chart-container">
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 130px; background: #a78bfa;"></div>
+                                <div class="bar current" style="height: 150px; background: #7c3aed;"></div>
+                            </div>
+                            <div class="bar-label">Open Pipeline</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 110px; background: #a78bfa;"></div>
+                                <div class="bar current" style="height: 120px; background: #7c3aed;"></div>
+                            </div>
+                            <div class="bar-label">Closed Won</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 35px; background: #a78bfa;"></div>
+                                <div class="bar current" style="height: 30px; background: #7c3aed;"></div>
+                            </div>
+                            <div class="bar-label">No Decision</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars-wrapper">
+                                <div class="bar previous" style="height: 25px; background: #a78bfa;"></div>
+                                <div class="bar current" style="height: 20px; background: #7c3aed;"></div>
+                            </div>
+                            <div class="bar-label">Closed Lost</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #6b7280;">
+                        <span style="margin-right: 20px;">■ Previous week</span>
+                        <span>■ Current week</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">Contracted by project</div>
+                    <div class="pie-chart">
+                        <div class="pie-circle" style="background: conic-gradient(
+                            #7c3aed 0deg 144deg,
+                            #3b82f6 144deg 252deg,
+                            #10b981 252deg 324deg,
+                            #f59e0b 324deg 360deg
+                        );"></div>
+                        <div class="pie-center"></div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #7c3aed;"></div>
+                            <span>Project A (40%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Project B (30%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Project C (20%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Other (10%)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">Status by account</div>
+                    <div class="pie-chart">
+                        <div class="pie-circle" style="background: conic-gradient(
+                            #06b6d4 0deg 180deg,
+                            #3b82f6 180deg 288deg,
+                            #10b981 288deg 360deg
+                        );"></div>
+                        <div class="pie-center"></div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #06b6d4;"></div>
+                            <span>Account 1 (50%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>Account 2 (30%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Account 3 (20%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
