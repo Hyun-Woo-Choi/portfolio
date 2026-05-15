@@ -464,6 +464,7 @@ h1 {
 
 .modal-backdrop {
   position: fixed;
+  z-index: 1000;
   inset: 0;
   background: var(--overlay);
   display: flex;
