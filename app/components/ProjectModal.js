@@ -1,9 +1,10 @@
 import Image from 'next/image';
+import { createPortal } from 'react-dom';
 
 export default function ProjectModal({ item, onClose }) {
   if (!item) return null;
 
-  return (
+  const modalContent = (
     <div
       className="modal-backdrop"
       role="dialog"
@@ -107,4 +108,6 @@ export default function ProjectModal({ item, onClose }) {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
