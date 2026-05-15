@@ -14,7 +14,7 @@ const githubUrl = profile.github
 
 export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState(null);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('parchment');
   const [showAllCompanies, setShowAllCompanies] = useState(false);
   const hasOddCompanyCount = companyWork.length % 2 === 1;
   const visibleCompanies = hasOddCompanyCount && !showAllCompanies ? companyWork.slice(0, -1) : companyWork;
@@ -22,19 +22,9 @@ export default function HomePage() {
   const chronologicalCompanies = [...companyWork].reverse();
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
     const savedTheme = window.localStorage.getItem('portfolio-theme');
-    const initialTheme = savedTheme || (mediaQuery.matches ? 'light' : 'dark');
-    setTheme(initialTheme);
-
-    if (savedTheme) return;
-
-    const onThemeChange = (event) => {
-      setTheme(event.matches ? 'light' : 'dark');
-    };
-
-    mediaQuery.addEventListener('change', onThemeChange);
-    return () => mediaQuery.removeEventListener('change', onThemeChange);
+    const themeMap = { dark: 'manila', light: 'parchment' };
+    setTheme(themeMap[savedTheme] || savedTheme || 'parchment');
   }, []);
 
   useEffect(() => {
@@ -61,19 +51,19 @@ export default function HomePage() {
         <div className="theme-toggle" role="tablist" aria-label="Theme switcher">
           <button
             type="button"
-            className={theme === 'dark' ? 'theme-chip is-active' : 'theme-chip'}
-            onClick={() => setTheme('dark')}
-            aria-pressed={theme === 'dark'}
+            className={theme === 'manila' ? 'theme-chip is-active' : 'theme-chip'}
+            onClick={() => setTheme('manila')}
+            aria-pressed={theme === 'manila'}
           >
-            Night
+            Manila
           </button>
           <button
             type="button"
-            className={theme === 'light' ? 'theme-chip is-active' : 'theme-chip'}
-            onClick={() => setTheme('light')}
-            aria-pressed={theme === 'light'}
+            className={theme === 'parchment' ? 'theme-chip is-active' : 'theme-chip'}
+            onClick={() => setTheme('parchment')}
+            aria-pressed={theme === 'parchment'}
           >
-            Day
+            Parchment
           </button>
         </div>
       </div>
